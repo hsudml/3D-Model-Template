@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>3D Model Showcase</title>
+    <meta name="description" content="Simple setup for showing a 3D model.">
+    <meta name="apple-mobile-web-app-capable">
+    <meta charset="UTF-8">
+    <script
+  src="https://code.jquery.com/jquery-3.3.1.min.js"
+  integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+  crossorigin="anonymous"></script>
+    <script src="https://aframe.io/releases/0.8.2/aframe.min.js"></script>
+    <script src="https://unpkg.com/aframe-environment-component/dist/aframe-environment-component.min.js"></script>
+        <script src="https://unpkg.com/aframe-orbit-controls@1.2.0/dist/aframe-orbit-controls.min.js"></script>
+    <script src="script.js"></script>
+  </head>
+  <body>
+    <!--ADD THE GLITCH REMIX BUTTON -->
+    <div class="glitchButton" style="position:fixed;top:20px;right:20px;z-index:1000;color:#fff !important;"></div>
+    
+    <a-scene id="scene"><!-- YOUR AFRAME SCENE IS ALL WITHIN THIS ELEMENT -->
+  
+      <!-- THE CAMERA -->
+      <a-entity position="0 1.5 0" rotation="-10 180 0" id="camera">
+        <a-entity camera orbit-controls="target: 0 0 0;  initialPosition: 0 1 -4"> <!-- Can't add wasd controls because it will conflict with the model rotation script-->
+        </a-entity>
+      </a-entity>
+      
+      <!-- LOAD YOUR ASSETS -->
+      <a-assets>
+        <a-asset-item id="whale" src="https://cdn.glitch.com/9f404064-4555-4893-ae71-1d3bf1f533e9%2Fwhale.gltf?1553032333468"></a-asset-item>
+        <img id="skyTexture" src="https://cdn.glitch.com/69799220-f410-4c67-81e9-1694ca0e13b9%2Fwinter-2383930.jpg?1547859713783" crossorigin="anonymous">
+        <a-asset-item id="whale-obj" src="https://cdn.glitch.com/9f404064-4555-4893-ae71-1d3bf1f533e9%2FtinkerWhale.obj?1553039389548"></a-asset-item>
+        <a-asset-item id="whale-mtl" src="https://cdn.glitch.com/9f404064-4555-4893-ae71-1d3bf1f533e9%2FobjWhale.mtl?1553039384931"></a-asset-item>
+      </a-assets>
+      
+      
+      <!--<a-sky src="#skyTexture" rotation="0 180 10"></a-sky>-->
+      
+      <!-- SET YOUR ENVIRONMENT -->
+      <a-entity environment="preset: starry; groundColor: #111; grid: cross; light-position: 0.1 0 0.2; groundYScale: 50; grid: 1x1;"></a-entity>
+      
+      <!-- ADD A COUPLE MORE LIGHTS -->
+      <a-light type="ambient" color="#999999"></a-light>
+      <a-light type="point" intensity="0.25" position="4.5 15 4"></a-light>
+      
+      <!-- ADD YOUR MODEL -->
+      <a-obj-model src="#whale-obj" mtl="#whale-mtl" position="0 1.5 0" scale="0.05 0.05 0.05" rotation="-90 90 0"></a-obj-model>
+      <!--<a-gltf-model src="#whale" position="0 0 0" scale="1 1 1"></a-gltf-model>-->
+      
+      <!-- THE TEXT AT THE TOP OF THE SCENE -->
+      <a-text value="Enter your title text here." 
+              width="20"
+              align="center" 
+              color="white" 
+              font="aileronsemibold" 
+              position="0 3.75 0"
+              side="double"
+              id="topText">      
+      </a-text>
+      
+      <!-- THE TEXT AT THE BOTTOM OF THE SCENE -->
+      <a-text value="Enter your description text here."
+              width="4" 
+              align="center"
+              color="yellow"
+              font="aileronsemibold"
+              position="0 0.5 2"
+              side="double"
+              id="bottomText">
+      </a-text>
+      
+    </a-scene>
+    <script src="https://button.glitch.me/button.js"></script>
+  </body>
+</html>
