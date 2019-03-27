@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
   <head>
     <title>3D Model Showcase</title>
     <meta name="description" content="Simple setup for showing a 3D model.">
@@ -12,44 +12,64 @@
     <script src="https://aframe.io/releases/0.9.0/aframe.min.js"></script>
     <script src="https://unpkg.com/aframe-environment-component/dist/aframe-environment-component.min.js"></script>
     <script src="https://unpkg.com/aframe-orbit-controls@1.2.0/dist/aframe-orbit-controls.min.js"></script>
-    <script src="https://unpkg.com/aframe-extras.animation-mixer@3.4.0/dist/aframe-extras.animation-mixer.js"></script>
+    <script src="https://unpkg.com/aframe-animation-component@^4.1.1/dist/aframe-animation-timeline-component.min.js"></script>
+    <script src="https://unpkg.com/aframe-animation-timeline-component@1.6.0/dist/aframe-animation-timeline-component.min.js"></script>
+    <script src="play-all-model-animations.js"></script>
+    <script>
+      AFRAME.registerComponent('modify-materials', {
+        init: function () {
+          // Wait for model to load.
+          this.el.addEventListener('model-loaded', () => {
+            // Grab the mesh / scene.
+            const obj = this.el.getObject3D('mesh');
+            // Go over the submeshes and modify materials we want.
+            obj.traverse(node => {
+              if (node.name.indexOf('ship') !== -1) {
+                node.material.color.set('red');
+              }
+            });
+          });
+        }
+      });
+    </script>
   </head>
   <body>
-    <!--ADD THE GLITCH REMIX BUTTON -->
-    <div class="glitchButton" style="position:fixed;top:20px;right:20px;z-index:1000;color:#fff !important;"></div>
-    
-    <a-scene id="scene"><!-- YOUR AFRAME SCENE IS ALL WITHIN THIS ELEMENT -->
-  
-      <!-- THE CAMERA -->
-      <a-entity camera orbit-controls="target: 0 1 0;  initialPosition: 0 2 5"></a-entity>
+    <a-scene animation-timeline__1="timeline: #myTimeline; loop: true">
       
-      <!-- LOAD YOUR ASSETS -->
-      <a-assets>
-        <a-asset-item id="tank" src="scene.gltf"></a-asset-item>
-        <img id="skyTexture" src="https://cdn.glitch.com/69799220-f410-4c67-81e9-1694ca0e13b9%2Fwinter-2383930.jpg?1547859713783" crossorigin="anonymous">
-        <a-asset-item id="whale-obj" src="assets/tinkerWhale.obj"></a-asset-item>
-        <a-asset-item id="whale-mtl" src="assets/objWhale.mtl"></a-asset-item>
+      <a-assets timeout="10000">
+        <a-asset-item id="tank" src="https://hsudml.github.io/3D-Model-Template/scene.gltf"></a-asset-item>
+        
+        <a-timeline id="myTimeline">
+          <a-timeline-animation select="#vegetank" name="moveright"></a-timeline-animation>
+          <a-timeline-animation select="#vegetank" name="rotateright"></a-timeline-animation>
+          <a-timeline-animation select="#vegetank" name="moveleft"></a-timeline-animation>
+          <a-timeline-animation select="#vegetank" name="rotateleft"></a-timeline-animation>
+        </a-timeline>
+        
+        <a-mixin id="roll"
+          animation__moveright="property: position; from: -12 0 -6; to: 12 0 -6; dur: 10000;"
+          animation__rotateright="property: rotation; from: 0 -90 0; to: 0 -270 0; dur: 3000;"
+          animation__moveleft="property: position; from: 12 0 -6; to: -12 0 -6; dur: 10000;"
+          animation__rotateleft="property: rotation; from: 0 -270 0; to: 0 -90 0; dur: 3000;"></a-mixin>
+        
       </a-assets>
       
-      
-      <!--<a-sky src="#skyTexture" rotation="0 180 10"></a-sky>-->
-      
       <!-- SET YOUR ENVIRONMENT -->
-      <a-entity environment="preset: starry; groundColor: #111; grid: cross; light-position: 0.1 0 0.2; groundYScale: 50; grid: 1x1;"></a-entity>
+      <a-entity environment="preset: starry; groundColor: #111; grid: cross; light-position: 0.1 0.1 0.2; groundYScale: 80; grid: 1x1;"></a-entity>
       
       <!-- ADD A COUPLE MORE LIGHTS -->
       <a-light type="ambient" color="#999999"></a-light>
-      <a-light type="point" intensity="1" position="4.5 25 4"></a-light>
+      <a-light type="point" intensity="0.25" position="4.5 15 4"></a-light>
       
-      <!-- ADD YOUR MODEL -->
-      <!--<a-obj-model src="#whale-obj" mtl="#whale-mtl" position="0 1.5 0" scale="0.05 0.05 0.05" rotation="-90 90 0"></a-obj-model>-->
-      <a-gltf-model src="#tank" 
-                    position="-12 0 -4" 
-                    scale="0.025 0.025 0.025" 
-                    rotation="0 -90 0" 
-                    gltf-model="scene.gltf"
-                    animation="property: position; to: 12 0 -6; dur: 3000; loop: true;"
-                    animation-mixer="clip: Take 001; loop: repeat;" ></a-gltf-model>
+      <a-entity gltf-model="#tank" 
+                id="vegetank"
+                position="-12 0 -6" 
+                scale="0.025 0.025 0.025" 
+                rotation="0 -90 0" 
+                mixin="roll"
+                animation-mixer
+                play-all-model-animations 
+                modify-materials></a-entity>
       
       <!-- THE TEXT AT THE TOP OF THE SCENE -->
       <a-text value="Vege Tank" 
@@ -63,7 +83,7 @@
       </a-text>
       
       <!-- THE TEXT AT THE BOTTOM OF THE SCENE -->
-      <a-text value="by Willy Decarpentrie - https://sketchfab.com/skudgee"
+      <a-text value="CC BY Willy Decarpentrie - https://sketchfab.com/skudgee"
               width="4" 
               align="center"
               color="yellow"
@@ -73,7 +93,9 @@
               id="bottomText">
       </a-text>
       
+      <!-- THE CAMERA -->
+      <a-entity camera orbit-controls="target: 0 1 0;  initialPosition: 0 2 5"></a-entity>
+      
     </a-scene>
-    <script src="https://button.glitch.me/button.js"></script>
   </body>
 </html>
